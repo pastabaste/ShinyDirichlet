@@ -70,12 +70,12 @@ leaflet(data = germany_nuts3_wgs84) %>%
     fillColor = "gray",
     fillOpacity = 0.6,
     highlightOptions = highlightOptions(
-      color = "red",      # Border color on highlight
+      color = "white",      # Border color on highlight
       weight = 3,         # Border thickness on highlight
       fillOpacity = 0.9,  # Fill opacity on highlight
       bringToFront = TRUE # Brings the highlighted polygon to the front
     ),
-    popup = ~paste0("<strong>County: </strong>", NUTS_NAME) # Replace 'county_name' with your actual field
+    popup = ~paste0("<strong>County: </strong>", NUTS_NAME)
   ) %>%
   addEasyButton(
     easyButton(
