@@ -47,9 +47,10 @@ germany_nuts3_wgs84 <- st_transform(germany_nuts3, crs = 4326)
 
 
 
-### combine data set
+# combine data set
 
-length(sort(unique(germany_nuts3_wgs84$NUTS_NAME))) != length(sort(unique(df$Raumeinheit))) # different number of kreise
+length(sort(unique(germany_nuts3_wgs84$NUTS_NAME))) != length(sort(unique(df$Raumeinheit)))
+# -> different number of kreise
 
 # identify kreis which is not available in Inkar & remove it from srf data
 same_kreis <- which(unique(substr(df$Raumeinheit, 1, 3)) %in% unique(substr(germany_nuts3_wgs84$NUTS_NAME, 1, 3)))
