@@ -123,6 +123,36 @@ server <- function(input, output, session) {
     data
   }))
   
+  output$map <- renderLeaflet({
+    leaflet(data = germany_nuts3_wgs84) %>%
+      addPolygons(
+        color = "black",
+        weight = 1,
+        fillColor = "gray",
+        fillOpacity = 0.6,
+        highlightOptions = highlightOptions(
+          color = "white",      # Border color on highlight
+          weight = 3,           # Border thickness on highlight
+          fillOpacity = 0.9,    # Fill opacity on highlight
+          bringToFront = TRUE   # Brings the highlighted polygon to the front
+        ),
+        popup = ~paste0("<strong>County: </strong>", NUTS_NAME) # Replace 'county_name' with your actual field
+      ) %>%
+      addEasyButton(
+        easyButton(
+          icon = "fa-crosshairs", title = "Zoom to Clicked County",
+          onClick = JS(
+            "function(btn, map) { 
+               map.on('click', function(e) { 
+                  map.setView(e.latlng, map.getZoom()); 
+               });
+            }"
+          )
+        )
+      )
+  })
+  
+  
   
   
 }
