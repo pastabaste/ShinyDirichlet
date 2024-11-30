@@ -14,7 +14,7 @@ server <- function(input, output, session) {
   output$fusszeile <- renderUI({
     fusszeile
   })
-  
+  a = 10,
   
   
   # adjust the template from here on
