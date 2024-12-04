@@ -9,7 +9,7 @@ ui <- fluidPage(
   
 
   # App title ----
-  titlePanel("Title of the Shiny"),
+  titlePanel("Elections based on INKAR data"),
   
   # Sidebar layout defined ----
   sidebarLayout(
@@ -58,25 +58,9 @@ ui <- fluidPage(
       
       # Output: tabsetPanel only needed for several tabs
       tabsetPanel(type = "tabs", id = "tabs",
-                  tabPanel("Plot", value = 1,
-                           fluidRow(column(width = 6, offset = 0,
-                                           plotOutput("histogram", width = "100%")),
-                                    column(width = 6, offset = 0,
-                                           uiOutput("formula1", inline = TRUE))
-                                    ),
-                           plotOutput("basicplot")
-                           ),
-                  tabPanel("Plotly", value = 2,
-                           # with spinner for indicating loading time
-                           withSpinner(plotlyOutput("plotly"), type = 3),
-                           img(src='example_dog.jpg')
-                  ),
-                  tabPanel("Datatable", value = 3,
+                  tabPanel("Map",value = 1,
                            br(),
-                           textOutput("exampletext"),
-                           br(),
-                           DT::dataTableOutput("table")
-                  )
+                           leafletOutput("map", height = "600px"))
       )
     )
   ),

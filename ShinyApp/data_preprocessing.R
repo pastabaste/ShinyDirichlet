@@ -1,9 +1,9 @@
-source("ShinyApp/global.R")
+source("global.R")
 
 
 ## Load and preprocess data 
 # INKAR data
-df <- read.csv2("data/preliminary_data.csv")
+df <- read.csv2("/Users/lukas/Desktop/Desktop copy/Studium/GAU/HWS24/shiny/data/preliminary_data.csv")
 # store year of column creation
 years <- df[1,]
 df <- df[-1,]
@@ -38,7 +38,7 @@ winner_colors <- set_winner_colors[apply(voting_shares_dir, 1, function(x)
 
 
 # SRF Data
-germany_nuts3 <- st_read("data/nuts3_germany/NUTS5000_N3.shp")
+germany_nuts3 <- st_read("/Users/lukas/Desktop/Desktop copy/Studium/GAU/HWS24/shiny/data/nuts3_germany/NUTS5000_N3.shp")
 
 
 # Transform sf object to WGS84
@@ -50,6 +50,7 @@ germany_nuts3_wgs84 <- st_transform(germany_nuts3, crs = 4326)
 # combine data set
 
 length(sort(unique(germany_nuts3_wgs84$NUTS_NAME))) != length(sort(unique(df$Raumeinheit)))
+
 # -> different number of kreise
 
 # identify kreis which is not available in Inkar & remove it from srf data
@@ -90,4 +91,14 @@ leaflet(data = germany_nuts3_wgs84) %>%
     )
   )
 
+
+
+
+
+same_name <- sort(df$Raumeinheit) == sort(germany_nuts3_wgs84$NUTS_NAME)
+diff_name_inkar <- sort(df$Raumeinheit)[!same_name]
+diff_name_wgs84 <- sort(germany_nuts3_wgs84$NUTS_NAME)[!same_name]
+
+# replace "kreisfreie" with "Kreisfreie"
+diff_name_inkar <- gsub("kreisfreie", "Kreisfreie", diff_name_inkar)
 

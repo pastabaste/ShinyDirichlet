@@ -4,6 +4,7 @@ if (!requireNamespace("pacman", quietly = TRUE)) {
 }
 library(pacman)
 library(DirichletReg)
+#remotes::install_github("sumtxt/bonn", force = TRUE)
 # use pacman to manage other packages
 p_load(shiny, 
        DT, 
@@ -17,7 +18,7 @@ p_load(shiny,
        sf,
        ggmap,
        ggplot2,
-       DirichReg
+       bonn
        )
 
 # global options
