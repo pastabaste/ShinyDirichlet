@@ -8,7 +8,7 @@ library(DirichletReg)
 # use pacman to manage other packages
 p_load(shiny, 
        DT, 
-       ggplot2, 
+       tidyverse, 
        plotly, 
        shinyBS,
        shinycssloaders,
@@ -18,9 +18,9 @@ p_load(shiny,
        sf,
        ggmap,
        ggplot2,
-       bonn
+       fmsb
        )
 
-# global options
 
+# global options
 options(spinner.color="#153268", spinner.color.background="#ffffff", spinner.size=2) # defines loading spinner used in plotly template
