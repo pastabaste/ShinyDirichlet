@@ -1,39 +1,34 @@
 # Call the helpers file
 source("helpers.R")
 
-
-# Define UI for random distribution app ----
 ui <- fluidPage(
-  
   includeCSS("style.css"),
   
-
-  # App title ----
+  # App title
   titlePanel("Elections based on INKAR data"),
   
-  # Sidebar layout defined ----
+  # Sidebar layout and tabsetPanel are made compatible
   sidebarLayout(
-    # Sidebar panel for inputs ----
     sidebarPanel(
       helpText("Click on a district to see the election results as a radar chart")
     ),
     
-    # Main panel for displaying outputs ----
     mainPanel(
-      tags$head(tags$script(src="template.js")),
-      
-      # Output: tabsetPanel only needed for several tabs
-      tabsetPanel(type = "tabs", id = "tabs",
-                  tabPanel("Map",value = 1,
-                           br(),
-                           leafletOutput("map", height = "600px")),
-                  tabPanel("Radar Chart", value = "radarTab",
-                           br(),
-                           plotlyOutput("radarChart", height = "600px"))
-              
+      tabsetPanel(
+        tabPanel(
+          "Map and Radar Chart",
+          fluidRow(
+            column(7, leafletOutput("map", height = "600px")),
+            column(4, 
+                   plotOutput("radarChart", height = "400px")) # radar chart observed shares
+                   #plotOutput("predictedRadarChart", height = "300px")) # radar chart predicted shares
+          )
+        ),
+        tabPanel(
+          "Data Table",
+          DTOutput("dataTable") # Placeholder for the data table
+        )
       )
     )
-  ),
-  uiOutput("fusszeile")
+  )
 )
-
