@@ -144,6 +144,6 @@ names(winner_colors) <- gsub("Stimmenanteile\\.","",names(winner_colors))
 data$incumbant_party <- names(winner_colors)
 data$color_incumbant <- winner_colors
 
-
 # voting_shares radarplot 
-voting_shares_radar <- cbind(NUTS_CODE = data$NUTS_CODE, voting_shares)
+voting_shares_radar <- cbind(KR = data$KR, voting_shares)
+colnames(voting_shares_radar)[2:ncol(voting_shares_radar)] <- gsub("Stimmenanteile\\.","",colnames(voting_shares_radar)[2:ncol(voting_shares_radar)])
