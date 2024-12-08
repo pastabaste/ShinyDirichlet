@@ -4,97 +4,110 @@ source("data_preprocessing.R")
 
 # Define server logic for app ----
 server <- function(input, output, session) {
-  
-  fusszeile <- div(class = "containerlow",
-                   tags$text(paste0("University of Goettingen, Faculty of Business and 
-                                    Economics, Chair of Spatial Data Science and Statistical Learning")),
-                   #tags$br(),
-                   tags$text(paste0("Project: Elections based on INKAR Data by Lukas Brüwer"))
-  )
+  fusszeile <- div(class = "containerlow", tags$text(
+    paste0(
+      "University of Goettingen, Faculty of Business and
+                                    Economics, Chair of Spatial Data Science and Statistical Learning"
+    )
+  ), #tags$br(),
+  tags$text(paste0(
+    "Project: Elections based on INKAR Data by Lukas Brüwer"
+  )))
   
   output$fusszeile <- renderUI({
     fusszeile
   })
+  # Map Kreise
   output$map <- renderLeaflet({
     leaflet(data = data) %>%
       #addProviderTiles(providers$Esri.WorldImagery) %>% # background
       addPolygons(
         color = "black",
         weight = 1,
-        fillColor = ~color_incumbant,
+        fillColor = ~ color_incumbant,
         fillOpacity = 0.6,
         highlightOptions = highlightOptions(
-          color = "white",      # Border color on highlight
-          weight = 3,         # Border thickness on highlight
-          fillOpacity = 0.9,  # Fill opacity on highlight
+          color = "white",
+          # Border color on highlight
+          weight = 3,
+          # Border thickness on highlight
+          fillOpacity = 0.9,
+          # Fill opacity on highlight
           bringToFront = TRUE # Brings the highlighted polygon to the front
         ),
-        popup = ~paste0("<strong>District: </strong>", KR, "<br>",
-                        "<strong>Incumbant Party: </strong>", incumbant_party
+        popup = ~ paste0(
+          "<strong>District: </strong>",
+          KR,
+          "<br>",
+          "<strong>Incumbant Party: </strong>",
+          incumbant_party
         ),
-        label = ~paste0(KR, "\n"
-        ),
+        label = ~ paste0(KR, "\n"),
         labelOptions = labelOptions(
           style = list("color" = "black"),
           textsize = "12px",
           direction = "auto"
         ),
-        layerId = ~NUTS_CODE
-      )%>%
+        layerId = ~ KR
+      ) %>%
       addLegend(
-        "bottomright",                          # Position of the legend
-        colors = c("black", "blue", "yellow", "red", "green", "purple", "grey"),  # Colors for each party
-        labels = c("CDU/CSU", "AfD", "FDP", "SPD", "Grüne", "Left", "Others"),   # Party names
+        "bottomright",
+        # Position of the legend
+        colors = c("black", "blue", "yellow", "red", "green", "purple", "grey"),
+        # Colors for each party
+        labels = c("CDU/CSU", "AfD", "FDP", "SPD", "Grüne", "Left", "Others"),
+        # Party names
         title = "Incumbant Party",
         opacity = 0.6
       ) %>%
-      addEasyButton(
-        easyButton(
-          icon = "fa-crosshairs", title = "Zoom to Clicked County",
-          onClick = JS(
-            "function(btn, map) { 
-           map.on('click', function(e) { 
-              map.setView(e.latlng, map.getZoom()); 
+      addEasyButton(easyButton(
+        icon = "fa-crosshairs",
+        title = "Zoom to Clicked County",
+        onClick = JS(
+          "function(btn, map) {
+           map.on('click', function(e) {
+              map.setView(e.latlng, map.getZoom());
            });
         }"
-          )
         )
-      )
+      ))
   })
-  
-  selected_district_data <- reactive({
-    req(input$map_shape_click)  # Ensure click event is triggered
-    
-    district_id <- input$map_shape_click$id  # Get the district ID from the click event
-    #district_name <- districts$NUTS_NAME[districts$district_id == district_id]
-    
-    # Retrieve the data for the selected district
-    district_data <- voting_shares[voting_shares_radar$NUTS_CODE == district_id, -1]  
-    
-    # Add rows for min and max values
-    data <- rbind(district_data, rep(1, ncol(district_data)))  
-    data <- rbind(rep(1, ncol(data)), rep(0, ncol(data)), data)  
-    return(data)
-  })
-  
+  # reactive radar chart (triggered by click on district)
   observeEvent(input$map_shape_click, {
     clicked_district <- input$map_shape_click$id
-    print(clicked_district)
     if (!is.null(clicked_district)) {
       # Update radar chart for the clicked district
-      output$radarChart <- renderPlotly({
-        district_data <- voting_shares[voting_shares_radar$NUTS_CODE == clicked_district, -1]
-        print(district_data)
-        chart_data <- rbind(rep(1, ncol(district_data)), rep(0, ncol(district_data)), district_data)
-        radarchart(
-          chart_data, axistype = 1,
-          pcol = rgb(0.2, 0.5, 0.8, 0.7),
-          pfcol = rgb(0.2, 0.5, 0.8, 0.5),
-          plwd = 2, plty = 1,
-          title = paste("Radar Chart for", clicked_district)
+      output$radarChart <- renderPlot({
+        district_data <- voting_shares_radar[voting_shares_radar$KR == clicked_district, -1]
+        chart_data <- rbind(rep(1, ncol(district_data)),
+                            rep(0, ncol(district_data)),
+                            district_data,
+                            rep(1, ncol(district_data)
+                                ))
+        radarchart(chart_data,
+          axistype = 1,# standard axis
+          pcol = "grey27", # polygon bordor color
+          pfcol = adjustcolor("slategrey", 0.2), # polygon fill color
+          plwd = 2, # line width
+          plty = 1, # line type
+          cglcol = "grey80", # grind line color
+          cglty = 2, # grid line type (solid)
+          cglwd = 0.8, # grid line width
+          axislabcol = "grey30", # axis label color
+          vlcex = 0.8, # axis label font size
+          title = paste("Share of Votes for", clicked_district),
+          cex.main = 0.85, # title font size
+          caxislabels = c("0%", "25%", "50%", "75%", "100%") # Custom grid labels
         )
+        # Add an annotation
+        legend("bottomright", legend = c("Actual Shares"), col = "#1f77b4", pch = 15, bty = "n", cex = 0.8)
+        
+        
+        
       })
       updateTabsetPanel(session, "tabs", selected = "radarTab")
     }
- })
+  })
+  # data table
+  
 }
