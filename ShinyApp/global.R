@@ -11,6 +11,7 @@ p_load(shiny,
        tidyverse, 
        plotly, 
        shinyBS,
+       shinyjs,
        shinycssloaders,
        shinydisconnect,
        leaflet,
@@ -18,7 +19,8 @@ p_load(shiny,
        sf,
        ggmap,
        ggplot2,
-       fmsb
+       fmsb,
+       openxlsx
        )
 
 

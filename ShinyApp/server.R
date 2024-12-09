@@ -87,7 +87,7 @@ server <- function(input, output, session) {
         radarchart(chart_data,
           axistype = 1,# standard axis
           pcol = "grey27", # polygon bordor color
-          pfcol = adjustcolor("slategrey", 0.2), # polygon fill color
+          pfcol = adjustcolor("white", 0.2), # polygon fill color
           plwd = 2, # line width
           plty = 1, # line type
           cglcol = "grey80", # grind line color
@@ -100,7 +100,7 @@ server <- function(input, output, session) {
           caxislabels = c("0%", "25%", "50%", "75%", "100%") # Custom grid labels
         )
         # Add an annotation
-        legend("bottomright", legend = c("Actual Shares"), col = "#1f77b4", pch = 15, bty = "n", cex = 0.8)
+        legend("bottomright", legend = c("Actual Shares"), col = "grey80", pch = 15, bty = "n", cex = 1)
         
         
         
@@ -108,6 +108,34 @@ server <- function(input, output, session) {
       updateTabsetPanel(session, "tabs", selected = "radarTab")
     }
   })
-  # data table
-  
+  # data - view 
+  output$dataTable <- renderDT({
+    datatable(
+      data[,],
+      options = list(
+        pageLength = 10,  # Number of rows per page
+        autoWidth = TRUE, # Adjust column widths
+        dom = "tip",      # Simplified interface (table, info, pagination)
+        scrollX = TRUE
+      )
+    )
+  })
+  # data - download via dropdown
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      print(paste0("data.", input$downloadFormat))  # Debugging: log filename
+      paste0("data.", input$downloadFormat)
+    },
+    content = function(file) {
+      format <- input$downloadFormat
+      print(format)
+      if (format == "csv") {
+        write_csv(data, file, row.names = FALSE)
+      } else if(format == "xlsx") {
+        write.xlsx(data, file)
+      }
+      else if(format == "rds") {
+      saveRDS(data, file)
+    } }
+  )
 }
